@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  webserver:
+    container_name: apache
+    build: ./docker/webserver
+    image: runwaytest_web
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    links:
+      - db
+
+  db:
+    image: mysql:5.6
+    container_name: mysql
+    ports: 
+      - "3306:3306"
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=docker
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: corbinu/docker-phpmyadmin
+    links:
+      - db:mysql
+    ports:
+      - 8181:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PORT_3306_TCP_ADDR: db
